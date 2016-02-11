@@ -1,6 +1,6 @@
 /* INSTRUCTIONS
 
-augusto@bott.com.br
+augusto@bott.com.br - jun/2014
 
 
 gcc -shared -o libmysqlbiomatcher.so libmysqlbiomatcher.c -I /opt/DigitalPersona/UareUSDK/Include/ -I /usr/include/mysql/ -ldpfpdd -ldpfj -fPIC
@@ -9,7 +9,8 @@ sudo cp libmysqlbiomatcher.so /usr/lib/mysql/plugin
 *** COPY libdpfj.so.2 to system libs dir ***
 sudo cp libdpfj.so.2 /usr/lib/
 
-*** DISABLE AppArmor! ***
+*** DISABLE AppArmor for MySQL/MariaDB or at least configure it properly! ***
+
 
 CREATE FUNCTION verify_fingerprint_udf RETURNS INTEGER SONAME 'libmysqlbiomatcher.so';
 DROP FUNCTION verify_fingerprint_udf;
@@ -97,7 +98,13 @@ int VerifyUser( unsigned char* dbPrint, unsigned int dbPrintSize, unsigned char*
   /* Only compare if both fingerprints have data */
   if (dbPrintSize > 0 && printSize > 0) {
     unsigned int falsematch_rate;
+/* COMPARES ISO MINUTIAE */
+    int result = dpfj_compare(DPFJ_FMD_ISO_19794_2_2005, dbPrint, dbPrintSize, 0, DPFJ_FMD_ISO_19794_2_2005, print, printSize, 0, &falsematch_rate);
+/* USE THIS TO COMPARE ANSI MINUTIAE */
+/*
     int result = dpfj_compare(DPFJ_FMD_ANSI_378_2004, dbPrint, dbPrintSize, 0, DPFJ_FMD_ANSI_378_2004, print, printSize, 0, &falsematch_rate);
+*/
+
     /* If the comparison was successful and the prints matched */
 //    if (result == DPFJ_SUCCESS && falsematch_rate < TARGET_FALSEMATCH_RATE) {
     if (result == DPFJ_SUCCESS && falsematch_rate < target_falsematch_rate) {
