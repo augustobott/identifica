@@ -1,6 +1,6 @@
 # identifica
 
-MySQL/MariaDB UDF to compare fingerprint minutia directly on the database.
+MySQL/MariaDB UDF to compare biometric/fingerprint minutia directly on the database.
 
 Requires DigitalPersona/Crossmatch SDK to compile.
 
